@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
-const stripe = require('stripe')(process.env.SECRET_key)
+const stripe = require('stripe')('sk_test_51NFEcBHhSxbFq9Eir7MwconGFtQoqQJrpYJ6sZIL9kHLx72UhS7SrnWjW2jIusBsWBk4w2XBK0Oh6JdO4RxSLpDJ00jjjl6bNf')
 const port = process.env.PORT || 5000;
 // i have to change all the thing 
 // middleware
@@ -18,7 +18,7 @@ const veryfyJWT = (req,res,next) =>{
     return res.status(403).send({err: true, mesage: 'unauthorized'})
   }
   const token = authorization.split(' ')[1];
-    jwt.verify(token,process.env.JWT_Token,(err,decoded) =>{
+    jwt.verify(token,'71a4cc6f71ccf017fa8d53e6731c3b637e0d24cb9e896337f2a1982aba1a2bea6954b09b10c556a5f5503e7ea746c77e150c21534ec8f77425792e431291eca3',(err,decoded) =>{
       if (err) {
         return res.status(401).send({err: true, mesage: 'unauthorized'})
       }
@@ -30,7 +30,7 @@ const veryfyJWT = (req,res,next) =>{
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 // const e = require('cors');
 const { default: Stripe } = require('stripe');
-const uri = `mongodb://${process.env.DB_user}:${process.env.DB_pass}@ac-wotlaa2-shard-00-00.0rmdzda.mongodb.net:27017,ac-wotlaa2-shard-00-01.0rmdzda.mongodb.net:27017,ac-wotlaa2-shard-00-02.0rmdzda.mongodb.net:27017/?ssl=true&replicaSet=atlas-as340s-shard-0&authSource=admin&retryWrites=true&w=majority`;
+const uri = `mongodb://Summer-vision:dUzuybuz2mJIf3Bs@ac-wotlaa2-shard-00-00.0rmdzda.mongodb.net:27017,ac-wotlaa2-shard-00-01.0rmdzda.mongodb.net:27017,ac-wotlaa2-shard-00-02.0rmdzda.mongodb.net:27017/?ssl=true&replicaSet=atlas-as340s-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -55,7 +55,7 @@ async function run() {
 
  app.post('/jwt',(req,res) =>{
   const user = req.body;
-  const token = jwt.sign(user,process.env.JWT_Token,{ expiresIn: '1h' });
+  const token = jwt.sign(user,'71a4cc6f71ccf017fa8d53e6731c3b637e0d24cb9e896337f2a1982aba1a2bea6954b09b10c556a5f5503e7ea746c77e150c21534ec8f77425792e431291eca3',{ expiresIn: '1h' });
   res.send({token})
  })
 
