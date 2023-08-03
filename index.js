@@ -211,7 +211,7 @@ app.patch('/user/admin/:id',async(req,res) =>{
 })
 // identify users 
 
-app.get('/user/admin/:email', veryfyJWT,async(req,res) =>{
+app.get('/user/admin/:email',async(req,res) =>{
   const email =  req.params.email
   const quary = {email : email};
 
@@ -222,7 +222,7 @@ app.get('/user/admin/:email', veryfyJWT,async(req,res) =>{
   const result = {admin : user?.role == "admin"}
   res.send(result)
 })
-app.get('/user/user/:email', veryfyJWT,async(req,res) =>{
+app.get('/user/user/:email',async(req,res) =>{
   const email =  req.params.email
   const quary = {email : email};
 
@@ -233,7 +233,7 @@ app.get('/user/user/:email', veryfyJWT,async(req,res) =>{
   const result = {users : user?.role == "user"}
   res.send(result)
 })
-app.get('/user/instractor/:email', veryfyJWT,async(req,res) =>{
+app.get('/user/instractor/:email',async(req,res) =>{
   const email =  req.params.email
   const quary = {email : email};
 
