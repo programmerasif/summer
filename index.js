@@ -107,12 +107,12 @@ app.put('/instructorUpdatedCasll/:id',async(req,res) =>{
 })
 
 // instractor adda new course 
-app.post('/allClasses',veryfyJWT,verifyinstructor,async(req,res) =>{
+app.post('/allClasses',verifyinstructor,async(req,res) =>{
   const body = req.body
   const result =await allClassesCollection.insertOne(body)
   res.send(result)
 })
-app.get('/instructorClasses/:email',veryfyJWT,verifyinstructor,async(req,res) =>{
+app.get('/instructorClasses/:email',verifyinstructor,async(req,res) =>{
   const email =req.params.email;
   // console.log(email);
   const quary = {email : email}
@@ -120,7 +120,7 @@ app.get('/instructorClasses/:email',veryfyJWT,verifyinstructor,async(req,res) =>
   res.send(result)
 })
 // for admin aproval
-app.get('/notApproveClasses',veryfyJWT,verifyAdmin,async(req,res) =>{
+app.get('/notApproveClasses',verifyAdmin,async(req,res) =>{
     const quary = {role : "aproveReq"}
     const result =await allClassesCollection.find(quary).toArray()
     res.send(result)
@@ -144,7 +144,7 @@ app.patch('/addedClass/:id',async(req,res) =>{
 
 
 // selected classes TODO
-app.post('/selectedClass/:id',veryfyJWT,async(req,res) =>{
+app.post('/selectedClass/:id',async(req,res) =>{
 const body = req.body;
 const id = req.params.id;
 const quary = {_id : new ObjectId(id)}
@@ -168,7 +168,7 @@ app.get('/enroledClasses/:email',async(req,res) =>{
 })
 // my selecter classes
 
-app.get('/myclasses',veryfyJWT,async(req,res) =>{
+app.get('/myclasses',async(req,res) =>{
   const email=  req.query.email
   const quary = {userEmail: email}
   const result =await selectedClassCollection.find(quary).toArray()
@@ -192,7 +192,7 @@ app.post('/all-user',async(req,res) =>{
   const result = await allUserCollection.insertOne(body)
   res.send(result)
 })
-app.get('/all-user',veryfyJWT,verifyAdmin,async(req,res) =>{
+app.get('/all-user',verifyAdmin,async(req,res) =>{
   const result = await allUserCollection.find().toArray()
   res.send(result)
 })
@@ -253,7 +253,7 @@ app.post('/paymentDetils',async(req,res)=>{
 })
 
 
-app.post('/creat-payment',veryfyJWT,async(req,res) =>{
+app.post('/creat-payment',async(req,res) =>{
   const {price} = req.body;
   const amount = Math.round(parseFloat(price) * 100);
   console.log(price);
