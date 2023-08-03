@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const stripe = require('stripe')(process.env.SECRET_key)
 const port = process.env.PORT || 5000;
-// done 
+// i have to change all the thing 
 // middleware
 app.use(cors())
 app.use(express.json())
