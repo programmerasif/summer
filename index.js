@@ -15,7 +15,8 @@ const veryfyJWT = (req,res,next) =>{
   console.log('14 number line' + authorization);
   
   if (!authorization) {
-    return res.status(403).send({err: true, mesage: 'unauthorized'})
+    return 
+    // res.status(403).send({err: true, mesage: 'unauthorized'})
   }
   const token = authorization.split(' ')[1];
     jwt.verify(token,'71a4cc6f71ccf017fa8d53e6731c3b637e0d24cb9e896337f2a1982aba1a2bea6954b09b10c556a5f5503e7ea746c77e150c21534ec8f77425792e431291eca3',(err,decoded) =>{
@@ -107,12 +108,12 @@ app.put('/instructorUpdatedCasll/:id',async(req,res) =>{
 })
 
 // instractor adda new course 
-app.post('/allClasses',verifyinstructor,async(req,res) =>{
+app.post('/allClasses',veryfyJWT,verifyinstructor,async(req,res) =>{
   const body = req.body
   const result =await allClassesCollection.insertOne(body)
   res.send(result)
 })
-app.get('/instructorClasses/:email',verifyinstructor,async(req,res) =>{
+app.get('/instructorClasses/:email',veryfyJWT,verifyinstructor,async(req,res) =>{
   const email =req.params.email;
   // console.log(email);
   const quary = {email : email}
@@ -120,7 +121,7 @@ app.get('/instructorClasses/:email',verifyinstructor,async(req,res) =>{
   res.send(result)
 })
 // for admin aproval
-app.get('/notApproveClasses',verifyAdmin,async(req,res) =>{
+app.get('/notApproveClasses',veryfyJWT,verifyAdmin,async(req,res) =>{
     const quary = {role : "aproveReq"}
     const result =await allClassesCollection.find(quary).toArray()
     res.send(result)
@@ -149,11 +150,11 @@ const body = req.body;
 const id = req.params.id;
 const quary = {_id : new ObjectId(id)}
 const filter = await selectedClassCollection.findOne(quary)
-// console.log(filter);
-// if (filter) {
-//   // return res.send({message : 'allready hear'})
-//   console.log(filter);
-// }
+console.log(filter);
+if (filter) {
+  return res.send({message : 'allready hear'})
+  console.log(filter);
+}
 
 const result = await selectedClassCollection.insertOne(body)
 res.send(result)
@@ -168,7 +169,7 @@ app.get('/enroledClasses/:email',async(req,res) =>{
 })
 // my selecter classes
 
-app.get('/myclasses',async(req,res) =>{
+app.get('/myclasses',veryfyJWT,async(req,res) =>{
   const email=  req.query.email
   const quary = {userEmail: email}
   const result =await selectedClassCollection.find(quary).toArray()
@@ -192,7 +193,7 @@ app.post('/all-user',async(req,res) =>{
   const result = await allUserCollection.insertOne(body)
   res.send(result)
 })
-app.get('/all-user',verifyAdmin,async(req,res) =>{
+app.get('/all-user',veryfyJWT,verifyAdmin,async(req,res) =>{
   const result = await allUserCollection.find().toArray()
   res.send(result)
 })
@@ -211,7 +212,7 @@ app.patch('/user/admin/:id',async(req,res) =>{
 })
 // identify users 
 
-app.get('/user/admin/:email',async(req,res) =>{
+app.get('/user/admin/:email', veryfyJWT,async(req,res) =>{
   const email =  req.params.email
   const quary = {email : email};
 
@@ -222,7 +223,7 @@ app.get('/user/admin/:email',async(req,res) =>{
   const result = {admin : user?.role == "admin"}
   res.send(result)
 })
-app.get('/user/user/:email',async(req,res) =>{
+app.get('/user/user/:email', veryfyJWT,async(req,res) =>{
   const email =  req.params.email
   const quary = {email : email};
 
@@ -233,7 +234,7 @@ app.get('/user/user/:email',async(req,res) =>{
   const result = {users : user?.role == "user"}
   res.send(result)
 })
-app.get('/user/instractor/:email',async(req,res) =>{
+app.get('/user/instractor/:email', veryfyJWT,async(req,res) =>{
   const email =  req.params.email
   const quary = {email : email};
 
@@ -253,7 +254,7 @@ app.post('/paymentDetils',async(req,res)=>{
 })
 
 
-app.post('/creat-payment',async(req,res) =>{
+app.post('/creat-payment',veryfyJWT,async(req,res) =>{
   const {price} = req.body;
   const amount = Math.round(parseFloat(price) * 100);
   console.log(price);
