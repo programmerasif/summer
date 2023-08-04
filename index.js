@@ -5,18 +5,15 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const stripe = require('stripe')(process.env.SECRET_key)
 const port = process.env.PORT || 5000;
-// done 
+
 // middleware
 app.use(cors())
 app.use(express.json())
 const veryfyJWT = (req,res,next) =>{
   const authorization = req.headers.authorization;
   
-  console.log('14 number line' + authorization);
-  
   if (!authorization) {
-    return 
-    res.status(403).send({err: true, mesage: 'unauthorized'})
+    return res.status(403).send({err: true, mesage: 'unauthorized'})
   }
   const token = authorization.split(' ')[1];
     jwt.verify(token,process.env.JWT_Token,(err,decoded) =>{
@@ -29,7 +26,7 @@ const veryfyJWT = (req,res,next) =>{
 }
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-// const e = require('cors');
+const e = require('cors');
 const { default: Stripe } = require('stripe');
 const uri = `mongodb://${process.env.DB_user}:${process.env.DB_pass}@ac-wotlaa2-shard-00-00.0rmdzda.mongodb.net:27017,ac-wotlaa2-shard-00-01.0rmdzda.mongodb.net:27017,ac-wotlaa2-shard-00-02.0rmdzda.mongodb.net:27017/?ssl=true&replicaSet=atlas-as340s-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
@@ -45,7 +42,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const sportCollection = client.db("Summer-vision").collection('classCatagory')
     const coachesCollection = client.db("Summer-vision").collection('coaches')
     const allClassesCollection = client.db("Summer-vision").collection('allClasses')
@@ -97,15 +94,6 @@ app.get('/allClasses',async(req,res) =>{
     const result =await allClassesCollection.find(quary).toArray()
     res.send(result)
 })
-// TODO
-app.put('/instructorUpdatedCasll/:id',async(req,res) =>{
-  const id =req.params.id;
-  console.log(id);
-  const quary = {_id : new ObjectId(id)};
-  const update = {$inc:{enrolled : +1}}
-  const result = await allClassesCollection.updateOne(quary,update)
-  res.send(result)
-})
 
 // instractor adda new course 
 app.post('/allClasses',veryfyJWT,verifyinstructor,async(req,res) =>{
@@ -115,7 +103,7 @@ app.post('/allClasses',veryfyJWT,verifyinstructor,async(req,res) =>{
 })
 app.get('/instructorClasses/:email',veryfyJWT,verifyinstructor,async(req,res) =>{
   const email =req.params.email;
-  // console.log(email);
+  console.log(email);
   const quary = {email : email}
   const result =await allClassesCollection.find(quary).toArray()
   res.send(result)
@@ -182,7 +170,7 @@ app.delete('/myclasses/:id',async(req,res) =>{
   res.send(result)
 })
 // All users rout 
-app.post('/all-user',async(req,res) =>{
+app.post('/all-user',veryfyJWT,async(req,res) =>{
   const body = req.body;
   const quary= {email : body.email}
   const isabilavle = await allUserCollection.findOne(quary)
@@ -257,8 +245,6 @@ app.post('/paymentDetils',async(req,res)=>{
 app.post('/creat-payment',veryfyJWT,async(req,res) =>{
   const {price} = req.body;
   const amount = Math.round(parseFloat(price) * 100);
-  console.log(price);
-  // const amount = price * 100
   const paymentIntent =  await stripe.paymentIntents.create({
     amount : amount,
     currency: 'usd',
@@ -277,13 +263,22 @@ app.delete('/confirmPayment/:id',async(req,res) =>{
 
 app.put('/deleteCount/:id', async(req,res) =>{
 const id = req.params.id
-// console.log(id);
+console.log(id);
 const quary = { _id : new ObjectId(id)};
 const update = {$inc: {availableSeats : -1}}
-// const updateInt = parseInt(update)
 const result = await allClassesCollection.updateOne(quary,update)
 res.send(result)
 
+})
+
+// updat value
+app.put('/instructorUpdatedCasll/:id',async(req,res) =>{
+  const id =req.params.id;
+  console.log(id);
+  const quary = {_id : new ObjectId(id)};
+  const update = {$inc:{enrolled : +1}}
+  const result = await allClassesCollection.updateOne(quary,update)
+  res.send(result)
 })
 
   await client.db("admin").command({ ping: 1 });
