@@ -15,7 +15,8 @@ const veryfyJWT = (req,res,next) =>{
   console.log('14 number line' + authorization);
   
   if (!authorization) {
-    return res.status(403).send({err: true, mesage: 'unauthorized'})
+    return 
+    res.status(403).send({err: true, mesage: 'unauthorized'})
   }
   const token = authorization.split(' ')[1];
     jwt.verify(token,process.env.JWT_Token,(err,decoded) =>{
